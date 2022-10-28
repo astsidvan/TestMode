@@ -6,7 +6,10 @@ import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import lombok.Value;
+
+
 import java.util.Locale;
+
 import static io.restassured.RestAssured.given;
 
 public class DataGenerator {
@@ -22,22 +25,24 @@ public class DataGenerator {
     private DataGenerator() {
     }
 
-    private static RegistrationDto sendRequest(RegistrationDto user) {
+    private static void sendRequest(RegistrationDto user) {
         given()
                 .spec(requestSpec)
                 .body(user)
-                .post("/api/sysytem/users")
+                .when()
+                .post("/api/system/users")
                 .then()
                 .statusCode(200);
-        return user;
     }
 
     public static String getRandomLogin() {
-        return faker.name().username();
+        String login = faker.name().username();
+        return login;
     }
 
     public static String getRandomPassword() {
-        return faker.internet().password();
+        String password = faker.internet().password();
+        return password;
     }
 
     public static class Registration {
@@ -45,11 +50,14 @@ public class DataGenerator {
         }
 
         public static RegistrationDto getUser(String status) {
-            return new RegistrationDto(getRandomLogin(),getRandomPassword(),status);
+            RegistrationDto user = new RegistrationDto(getRandomLogin(), getRandomPassword(), status);
+            return user;
         }
 
         public static RegistrationDto getRegisteredUser(String status) {
-            return sendRequest(getUser(status));
+            var registeredUser = getUser(status);
+            sendRequest(registeredUser);
+            return registeredUser;
         }
     }
 
